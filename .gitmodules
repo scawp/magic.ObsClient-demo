@@ -1,0 +1,9 @@
+[submodule "submodules/magic.ObsClient"]
+	path = submodules/magic.ObsClient
+	url = git@github.com:scawp/magic.ObsClient.git
+[submodule "submodules/love2d-lua-websocket"]
+	path = submodules/love2d-lua-websocket
+	url = git@github.com:flaribbit/love2d-lua-websocket.git
+[submodule "submodules/lunajson"]
+	path = submodules/lunajson
+	url = git@github.com:grafi-tt/lunajson.git

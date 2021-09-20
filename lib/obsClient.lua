@@ -1,0 +1,1 @@
+../submodules/magic.ObsClient/src/obsClient.lua
