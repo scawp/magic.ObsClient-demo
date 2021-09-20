@@ -1,3 +1,7 @@
+if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
+  require("lldebugger").start()
+end
+
 love.filesystem.setRequirePath(love.filesystem.getRequirePath() .. ";lib/?.lua")
 
 local obs = require 'obsClient'
