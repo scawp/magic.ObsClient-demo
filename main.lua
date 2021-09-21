@@ -4,15 +4,17 @@ end
 
 love.filesystem.setRequirePath(love.filesystem.getRequirePath() .. ";lib/?.lua")
 
-local obs = require 'obsClient'
+local obsClient = require 'obsClient'
 
 function love.load()
-  obs:init()
+  obsClient:init()
 end
 
 function love.update(dt)
-  obs:update(dt)
+  obsClient:update(dt)
 end
+
+
 
 function love.draw()
 end
