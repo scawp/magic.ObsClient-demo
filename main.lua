@@ -16,15 +16,19 @@ function love.load()
   obsClient:GetSceneList()
 end
 
- obsClient.GetSceneList = function(self)
+obsClient.GetSceneList = function(self)
   local params = {
     ["request-type"] = "GetSceneList",
-    ["message-id"] = "GetSceneListMessageId"
+    ["callback_func"] = "GetSceneListCallBack"
   }
-  print(self.encode(params))
-  self:send(self.encode(params))
+  self:sendObsRequest(params)
 
  end
+
+obsClient.GetSceneListCallBack = function(self, data)
+  self:log("Getting Current Scene \"" .. data["current-scene"] .. "\"", "Callback")
+  scene_name_text_ui:set("Current Scene: HUZZAH " .. data["current-scene"])
+end
 
 function love.update(dt)
   obsClient:update(dt)
