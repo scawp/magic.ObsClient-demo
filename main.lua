@@ -6,18 +6,51 @@ love.filesystem.setRequirePath(love.filesystem.getRequirePath() .. ";lib/?.lua")
 
 local obsClient = require 'obsClient'
 
+local magicDebug = require 'tools.magicDebug'
+
 function love.load()
+  --magicDebug.parse_event_functions_from_file("1events.txt")
+
   obsClient:init()
+
+  obsClient:GetSceneList()
 end
+
+ obsClient.GetSceneList = function(self)
+  local params = {
+    ["request-type"] = "GetSceneList",
+    ["message-id"] = "GetSceneListMessageId"
+  }
+  print(self.encode(params))
+  self:send(self.encode(params))
+
+ end
 
 function love.update(dt)
   obsClient:update(dt)
 end
 
+scene_name_text_ui = love.graphics.newText(love.graphics.getFont(), "Current Scene: No Data" )
 
+obsClient.SwitchScenes = function(self, data)
+  self:log("Running SwitchScenes \"" .. data["scene-name"] .. "\"", "Success")
+  scene_name_text_ui:set("Current Scene: " .. data["scene-name"])
+end
 
 function love.draw()
+  local new_line_start, margin = 10, 10
+  love.graphics.draw(scene_name_text_ui, margin, new_line_start )
+  new_line_start = new_line_start + scene_name_text_ui:getHeight() + 5
+  --love.graphics.draw(scene_name_text_ui, margin, new_line_start )
 end
+
+
+
+local obsCallbackHandler = {
+  update = function()
+
+  end
+}
 
 function love.keypressed(key)
   print("change scene key:" .. key)
