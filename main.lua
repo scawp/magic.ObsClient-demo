@@ -2,65 +2,41 @@ if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
   require("lldebugger").start()
 end
 
-love.filesystem.setRequirePath(love.filesystem.getRequirePath() .. ";lib/?.lua")
+love.filesystem.setRequirePath(love.filesystem.getRequirePath() .. ";lib/?.lua;lib/?/init.lua")
 
-local obsClient = require 'obsClient'
+--temp fix for requests/events self call
+OBSCLIENT = require 'obsClient'
+--move this to menu or make local and inject?
+URUTORA = require('urutora'):new()
 
-local magicDebug = require 'tools.magicDebug'
+MENU = require 'ui'
 
 function love.load()
-  --magicDebug.parse_event_functions_from_file("1events.txt")
-
+  obsClient = OBSCLIENT:new("localhost", 6666)
   obsClient:init()
 
-  obsClient:GetSceneList()
-end
-
-obsClient.GetSceneList = function(self)
-  local params = {
-    ["request-type"] = "GetSceneList",
-    ["callback_func"] = "GetSceneListCallBack"
-  }
-  self:sendObsRequest(params)
-
- end
-
-obsClient.GetSceneListCallBack = function(self, data)
-  self:log("Getting Current Scene \"" .. data["current-scene"] .. "\"", "Callback")
-  scene_name_text_ui:set("Current Scene: HUZZAH " .. data["current-scene"])
+  MENU:init()
 end
 
 function love.update(dt)
   obsClient:update(dt)
-end
-
-scene_name_text_ui = love.graphics.newText(love.graphics.getFont(), "Current Scene: No Data" )
-
-obsClient.SwitchScenes = function(self, data)
-  self:log("Running SwitchScenes \"" .. data["scene-name"] .. "\"", "Success")
-  scene_name_text_ui:set("Current Scene: " .. data["scene-name"])
+  URUTORA:update(dt)
 end
 
 function love.draw()
-  local new_line_start, margin = 10, 10
-  love.graphics.draw(scene_name_text_ui, margin, new_line_start )
-  new_line_start = new_line_start + scene_name_text_ui:getHeight() + 5
-  --love.graphics.draw(scene_name_text_ui, margin, new_line_start )
+  URUTORA:draw()
 end
 
+function love.mousepressed(x, y, button) URUTORA:pressed(x, y) end
+function love.mousemoved(x, y, dx, dy) URUTORA:moved(x, y, dx, dy) end
+function love.mousereleased(x, y, button) URUTORA:released(x, y) end
+function love.textinput(text) URUTORA:textinput(text) end
+function love.wheelmoved(x, y) URUTORA:wheelmoved(x, y) end
 
+function love.keypressed(k, scancode, isrepeat)
+  URUTORA:keypressed(k, scancode, isrepeat)
 
-local obsCallbackHandler = {
-  update = function()
-
-  end
-}
-
-function love.keypressed(key)
-  print("change scene key:" .. key)
-  if (key == "1") then
-    --scene 1
-  elseif (key == "2") then
-    --scene 2
+  if k == 'escape' then
+    love.event.quit()
   end
 end
