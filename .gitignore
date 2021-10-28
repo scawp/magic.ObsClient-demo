@@ -1,2 +1,5 @@
 .vscode/settings.json
 .vscode/launch.json
+workspace.code-workspace
+tmp/
+tools/

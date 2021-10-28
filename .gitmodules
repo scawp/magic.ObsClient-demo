@@ -7,3 +7,6 @@
 [submodule "submodules/lunajson"]
 	path = submodules/lunajson
 	url = git@github.com:grafi-tt/lunajson.git
+[submodule "submodules/urutora"]
+	path = submodules/urutora
+	url = git@github.com:tavuntu/urutora.git
