@@ -4,51 +4,35 @@ end
 
 love.filesystem.setRequirePath(love.filesystem.getRequirePath() .. ";lib/?.lua;lib/?/init.lua")
 
-URUTORA = require('urutora'):new()
-DEMO = require 'demo'
-
-function loadSettings()
-  local settings = {}
-  if not love.filesystem.getInfo("Magic.conf") then
-    return "localhost", "4444"
-  end
-  for line in love.filesystem.lines("Magic.conf") do
-    table.insert(settings, line)
-  end
-  return settings[1], settings[2]
-end
-
---move save to here
+local urutora = require('urutora'):new()
+local demo = require 'demo'
+local host, port = demo:loadSettings()
+local obsClient = require('obsClient').new(host, port)
 
 function love.load()
-  --love.window.setFullscreen(true)
-
-  local host, port = loadSettings()
-  obsClient = require('obsClient').new(host, port)
-
-  DEMO:init()
+  demo:init(urutora, obsClient)
 end
 
 function love.update(dt)
   obsClient:update(dt)
-  DEMO:update(dt)
+  demo:update(dt)
 end
 
 function love.draw()
-  DEMO:draw()
+  demo:draw()
 end
 
 function love.resize()
-  DEMO:resize()
+  demo:resize()
 end
 
-function love.mousepressed(x, y, button) URUTORA:pressed(x, y) end
-function love.mousemoved(x, y, dx, dy) URUTORA:moved(x, y, dx, dy) end
-function love.mousereleased(x, y, button) URUTORA:released(x, y) end
-function love.textinput(text) URUTORA:textinput(text) end
-function love.wheelmoved(x, y) URUTORA:wheelmoved(x, y) end
+function love.mousepressed(x, y, button) urutora:pressed(x, y) end
+function love.mousemoved(x, y, dx, dy) urutora:moved(x, y, dx, dy) end
+function love.mousereleased(x, y, button) urutora:released(x, y) end
+function love.textinput(text) urutora:textinput(text) end
+function love.wheelmoved(x, y) urutora:wheelmoved(x, y) end
 function love.keypressed(k, scancode, isrepeat)
-  URUTORA:keypressed(k, scancode, isrepeat)
+  urutora:keypressed(k, scancode, isrepeat)
 
   if k == 'escape' then
     love.event.quit()

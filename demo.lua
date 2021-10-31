@@ -1,26 +1,22 @@
 return {
-  u = URUTORA, --inject this
-  w = 360, --720,--360,
-  h = 640, --1280,--640,
+  u = nil,
+  w = 360,
+  h = 640,
   scale_x = 1,
   scale_y = 1,
-  ui_canvas,
+  ui_canvas = nil,
   panels = {},
-  --bgColor = {45 / 255, 45 / 255, 45 / 255},
-  bgColor= URUTORA.utils.toRGB('#FF57BB'),
-  style = { 
-    --fgColor = {45 / 255, 45 / 255, 45 / 255},
-    fgColor = URUTORA.utils.toRGB('#fefefe'),
-    --bgColor = {245 / 255, 185 / 255, 200 / 255}, 
-    bgColor = URUTORA.utils.toRGB('#7A306C'),
---   hoverbgColor = URUTORA.utils.toRGB('#e3e3ef'),
---    hoverfgColor = URUTORA.utils.toRGB('#148ee3'),
---    disablefgColor = URUTORA.utils.toRGB('#ffffff'),
---    disablebgColor = URUTORA.utils.toRGB('#cccccc'),
---    outlineColor = URUTORA.utils.toRGB('#aaaaaa')
-  },
 
-  init = function(self)
+
+  init = function(self, urutora, obsClient)
+    self.u = urutora
+    self.obsClient = obsClient
+    self.bgColor= self.u.utils.toRGB('#FF57BB')
+    self.style = {
+      fgColor = self.u.utils.toRGB('#fefefe'),
+      bgColor = self.u.utils.toRGB('#7A306C'),
+    }
+
     self:reset()
     --make canvas
     self.ui_canvas = love.graphics.newCanvas(self.w, self.h)
@@ -54,6 +50,17 @@ return {
     self.u.setResolution(self.w, self.h)
   end,
 
+  loadSettings = function()
+    local settings = {}
+    if not love.filesystem.getInfo("Magic.conf") then
+      return "localhost", "4444"
+    end
+    for line in love.filesystem.lines("Magic.conf") do
+      table.insert(settings, line)
+    end
+    return settings[1], settings[2]
+  end,
+
   saveSettings = function (self, url, port)
     love.filesystem.write("Magic.conf", url .. "\n")
     love.filesystem.append("Magic.conf", port)
@@ -64,13 +71,13 @@ return {
                                 rows = 3,
                                 cols = 5,
                                 x = 0, 
-                                y = 10, --Damn Camera Hole 
+                                y = 10,
                                 w = self.w, 
                                 h = self.h / 5  })
 
     local lbl_current_scene = self.u.label({ text = 'Connected', tag = "Lbl_Status" })
-    local txt_host = self.u.text({ text = obsClient.host }):action(function() love.keyboard.setTextInput(false) end)
-    local txt_port = self.u.text({ text = tostring(obsClient.port) })
+    local txt_host = self.u.text({ text = self.obsClient.host })
+    local txt_port = self.u.text({ text = tostring(self.obsClient.port) })
     
     panel
       :colspanAt(1, 1, 5)
@@ -91,7 +98,7 @@ return {
       :setStyle(self.style)
 
 
-    obsClient:watchEvent("SwitchScenes", function (data)
+    self.obsClient:watchEvent("SwitchScenes", function (data)
         lbl_current_scene.text = "Current Scene: " .. data["scene-name"]
       end)
 
@@ -111,22 +118,22 @@ return {
       :addAt(1, 1, self.u.button({text = "Start Stream",
                             tag = "btn_start_stream"})
                             :action(function ()
-                              obsClient:sendRequest("StartStreaming")
+                              self.obsClient:sendRequest("StartStreaming")
                             end))
       :addAt(1, 2, self.u.button({text = "Stop Stream",
                             tag = "btn_stop_stream"})
                             :action(function ()
-                              obsClient:sendRequest("StopStreaming")
+                              self.obsClient:sendRequest("StopStreaming")
                             end))
       :addAt(2, 1, self.u.button({text = "Record",
                             tag = "btn_start_recording"})
                             :action(function ()
-                              obsClient:sendRequest("StartRecording")
+                              self.obsClient:sendRequest("StartRecording")
                             end))
       :addAt(2, 2, self.u.button({text = "End",
                             tag = "btn_stop_recording"})
                             :action(function ()
-                              obsClient:sendRequest("StopRecording")
+                              self.obsClient:sendRequest("StopRecording")
                             end))
       :setStyle(self.style)
 
@@ -148,7 +155,7 @@ return {
       panel:addAt(i, 1 , self.u.button({text = scene.name, 
                     tag = "Btn_Scene_" .. i})
                     :action(function ()
-                      obsClient:sendRequest("SetCurrentScene", {["scene-name"] = scene.name})
+                      self.obsClient:sendRequest("SetCurrentScene", {["scene-name"] = scene.name})
                     end))
     end
 
@@ -161,7 +168,7 @@ return {
   end,
 
   getSceneList = function(self)
-    obsClient:sendRequest("GetSceneList", 
+    self.obsClient:sendRequest("GetSceneList", 
                           true,
                           function(data)
                             self:buildScenesPanel(data)
@@ -170,7 +177,7 @@ return {
 
   reset = function (self)
     self.panels = {}
-    URUTORA.nodes = {}
+    self.u.nodes = {}
   end,
 
   addPanels = function (self)
