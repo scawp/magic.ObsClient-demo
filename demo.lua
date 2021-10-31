@@ -92,7 +92,6 @@ return {
 
 
     obsClient:watchEvent("SwitchScenes", function (data)
-        --URUTORA:getNodeByTag("Lbl_Status").text = "Current Scene: " .. data["scene-name"]
         lbl_current_scene.text = "Current Scene: " .. data["scene-name"]
       end)
 
@@ -112,31 +111,22 @@ return {
       :addAt(1, 1, self.u.button({text = "Start Stream",
                             tag = "btn_start_stream"})
                             :action(function ()
-                              obsClient:sendObsRequest({
-                                ["request-type"] = "StartStreaming"
-                              })
+                              obsClient:sendRequest("StartStreaming")
                             end))
       :addAt(1, 2, self.u.button({text = "Stop Stream",
                             tag = "btn_stop_stream"})
                             :action(function ()
-                              obsClient:sendObsRequest({
-                                ["request-type"] = "StopStreaming"
-                              })
+                              obsClient:sendRequest("StopStreaming")
                             end))
       :addAt(2, 1, self.u.button({text = "Record",
                             tag = "btn_start_recording"})
                             :action(function ()
-                              obsClient:sendObsRequest({
-                                ["request-type"] = "StartRecording"
-                              })
+                              obsClient:sendRequest("StartRecording")
                             end))
       :addAt(2, 2, self.u.button({text = "End",
                             tag = "btn_stop_recording"})
                             :action(function ()
-                              --obsClient:log("STOP","Callback")
-                              obsClient:sendObsRequest({
-                                ["request-type"] = "StopRecording"
-                              })
+                              obsClient:sendRequest("StopRecording")
                             end))
       :setStyle(self.style)
 
@@ -158,10 +148,7 @@ return {
       panel:addAt(i, 1 , self.u.button({text = scene.name, 
                     tag = "Btn_Scene_" .. i})
                     :action(function ()
-                      obsClient:sendObsRequest({
-                        ["request-type"] = "SetCurrentScene",
-                        ["scene-name"] = scene.name
-                      })
+                      obsClient:sendRequest("SetCurrentScene", {["scene-name"] = scene.name})
                     end))
     end
 
@@ -174,16 +161,11 @@ return {
   end,
 
   getSceneList = function(self)
-    obsClient:sendObsRequest({
-      ["request-type"] = "GetSceneList",
-      ["retry"] = true,
-      ["callback_func"] = function(self, data)
-        obsClient:log("Getting Current Scene \"" .. data["current-scene"] .. "\"", "Callback")
-        
-        --TODO: no ref to self???
-        DEMO:buildScenesPanel(data)
-      end
-    })
+    obsClient:sendRequest("GetSceneList", 
+                          true,
+                          function(data)
+                            self:buildScenesPanel(data)
+                          end)
   end,
 
   reset = function (self)

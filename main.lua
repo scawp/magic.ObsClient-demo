@@ -4,29 +4,8 @@ end
 
 love.filesystem.setRequirePath(love.filesystem.getRequirePath() .. ";lib/?.lua;lib/?/init.lua")
 
---temp fix for requests/events self call
-OBSCLIENT = require 'obsClient'
---move this to menu or make local and inject?
 URUTORA = require('urutora'):new()
-
 DEMO = require 'demo'
-
---unused function
-function URUTORA:getNodeByTag(tag)
-	for _, v in ipairs(self.nodes) do
-		if v.tag and v.tag == tag then
-			return v
-		end
-		if URUTORA.utils.isPanel(v) then
-			v:forEach(function (node)
-				if node.tag and node.tag == tag then
-					return v
-				end
-			end)
-		end
-	end
-	return false
-end
 
 function loadSettings()
   local settings = {}
@@ -39,13 +18,14 @@ function loadSettings()
   return settings[1], settings[2]
 end
 
+--move save to here
+
 function love.load()
   --love.window.setFullscreen(true)
 
   local host, port = loadSettings()
-  obsClient = OBSCLIENT.new(host, port)
+  obsClient = require('obsClient').new(host, port)
 
-  obsClient:init()
   DEMO:init()
 end
 
