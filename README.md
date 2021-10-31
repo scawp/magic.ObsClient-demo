@@ -1,6 +1,8 @@
 # mägic.ObsClient-demo
 A demo of mägic.ObsClient
 
+# This is a work in progress
+
 # Requirements
 - [Love2d](https://love2d.org) version used 11.3
 - [OBS](https://obsproject.com) version used 27.0.1
