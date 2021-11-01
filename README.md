@@ -1,9 +1,7 @@
 # mägic.ObsClient-demo
 A demo of mägic.ObsClient
 
-# This is a work in progress
-
-see [mägic.ObsClient](https://github.com/scawp/magic.ObsClient) for documentation
+This is a work in progress of Demo of [mägic.ObsClient](https://github.com/scawp/magic.ObsClient), refer to this for documentation. this project is intended as a simple example, as such advanced features will not be implemented (however I do plan on releasing a bigger project based on this in future), only bug fixes will be addressed, please see [issues](https://github.com/scawp/magic.ObsClient-demo/issues). 
 
 # Requirements
 - [Love2d](https://love2d.org) version used 11.3
