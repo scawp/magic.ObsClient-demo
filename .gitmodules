@@ -9,4 +9,4 @@
 	url = git@github.com:grafi-tt/lunajson.git
 [submodule "submodules/urutora"]
 	path = submodules/urutora
-	url = git@github.com:tavuntu/urutora.git
+	url = git@github.com:scawp/urutora-fork.git
