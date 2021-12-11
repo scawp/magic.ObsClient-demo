@@ -88,7 +88,6 @@ return {
       --                      keep_aspect_ratio = true }))
       :addAt(2, 1, lbl_current_scene)
       :addAt(2, 5, self.u.button({ text = 'Save' }):action(function ()
-        love.keyboard.setTextInput(true)
         self:saveSettings(txt_host.text, txt_port.text)
       end))
       :addAt(3, 1, self.u.label({ text = "Host:"}))
