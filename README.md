@@ -25,7 +25,7 @@ This is a work in progress of Demo of [mägic.ObsClient](https://github.com/scaw
 ## Note
 The project links to submodules via symlinking, this my be an issue for windows users (enable Windows 10 Developer mode and configure git for symlinks)
 
-#I don't care about the code, how do I run this?!
+# I don't care about the code, how do I run this?!
 
 ## Android
 
